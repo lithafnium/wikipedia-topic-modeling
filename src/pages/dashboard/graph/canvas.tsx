@@ -65,7 +65,9 @@ const Canvas = ({ setThumbnail }: any) => {
       const height = window.innerHeight;
       const stage = stageRef.current;
       if (stage) {
+        // @ts-ignore
         stage.width(width);
+        // @ts-ignore
         stage.height(height);
       }
     };
@@ -85,17 +87,21 @@ const Canvas = ({ setThumbnail }: any) => {
     e.evt.preventDefault();
     const stage = stageRef.current;
     if (stage) {
+      // @ts-ignore
       const oldScale = stage.scaleX();
+      // @ts-ignore
       const pointer = stage.getPointerPosition();
 
       const mousePointTo = {
+        // @ts-ignore
         x: (pointer.x - stage.x()) / oldScale,
+        // @ts-ignore
         y: (pointer.y - stage.y()) / oldScale,
       };
 
       const newScale =
         e.evt.deltaY > 0 ? oldScale * scaleBy : oldScale / scaleBy;
-
+      // @ts-ignore
       stage.scale({ x: newScale, y: newScale });
 
       const newX = pointer.x - mousePointTo.x * newScale;
@@ -108,6 +114,7 @@ const Canvas = ({ setThumbnail }: any) => {
         x: newX,
         y: newY,
       };
+      // @ts-ignore
       stage.position(newPos);
     }
   };
@@ -125,6 +132,7 @@ const Canvas = ({ setThumbnail }: any) => {
           onMouseOver={() => {
             const stage = stageRef.current;
             if (stage) {
+              // @ts-ignore
               const pointer = stage.getPointerPosition();
               nodes[index].mouseOver(pointer.x, pointer.y);
             }
@@ -132,6 +140,7 @@ const Canvas = ({ setThumbnail }: any) => {
           onMouseOut={() => {
             const stage = stageRef.current;
             if (stage) {
+              // @ts-ignore
               const pointer = stage.getPointerPosition();
               nodes[index].mouseOut(pointer.x, pointer.y);
             }
@@ -161,6 +170,7 @@ const Canvas = ({ setThumbnail }: any) => {
       ref={stageRef}
       onClick={(e) => console.log(e)}
       onWheel={(e) => onWheel(e)}
+      // @ts-ignore
       width={window.innerWidth}
       height={window.innerHeight}
       draggable={true}
