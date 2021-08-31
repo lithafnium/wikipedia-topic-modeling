@@ -83,7 +83,6 @@ const Canvas = ({ setThumbnail }: any) => {
 
   const onWheel = (e: any) => {
     const scaleBy = 1.03;
-
     e.evt.preventDefault();
     const stage = stageRef.current;
     if (stage) {
