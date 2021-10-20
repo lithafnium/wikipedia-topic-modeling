@@ -15,7 +15,7 @@ const ParseWikipedia = ({ content, summary, title }: any) => {
       {content &&
         content.map((section: any, i: number) => {
           return (
-            <div>
+            <div key={i}>
               <Heading id={`${i + 1}.0`}>
                 <Line />
                 <Heading1>
@@ -27,7 +27,7 @@ const ParseWikipedia = ({ content, summary, title }: any) => {
               {section.items &&
                 section.items.map((item: any, j: number) => {
                   return (
-                    <div>
+                    <div key={j}>
                       <Heading id={`${i + 1}.${j + 1}`}>
                         <Line />
                         <Heading2>
@@ -38,7 +38,7 @@ const ParseWikipedia = ({ content, summary, title }: any) => {
                       {item.items &&
                         item.items.map((itemInner: any, z: number) => {
                           return (
-                            <div>
+                            <div key={z}>
                               <Heading id={`${i + 1}.${j + 1}.${z + 1}`}>
                                 <Line />
                                 <Heading3>

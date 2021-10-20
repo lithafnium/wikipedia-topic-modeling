@@ -6,8 +6,8 @@ interface Node {
   y: number;
   mouseX: number;
   mouseY: number;
+  topic: string;
   id: number;
-  neighbors: Array<Node>;
   mouseOver: (x: number, y: number) => void;
   mouseOut: (x: number, y: number) => void;
   dragMove: (
@@ -24,6 +24,7 @@ const Node = (function (
   this: Node,
   x: number,
   y: number,
+  topic: string,
   id: number,
   setThumbnail: (obj: any) => void
 ) {
@@ -32,7 +33,7 @@ const Node = (function (
   this.mouseX = 0;
   this.mouseY = 0;
   this.id = id;
-  this.neighbors = [];
+  this.topic = topic;
 
   this.mouseOver = (x: number, y: number) => {
     document.body.style.cursor = "pointer";
@@ -65,7 +66,7 @@ const Node = (function (
     let x = e.target.x();
     let y = e.target.y();
 
-    let updatedNode = new Node(x, y, index, setThumbnail);
+    let updatedNode = new Node(x, y, this.topic, index, setThumbnail);
 
     let newEdges = [...edges];
 
@@ -86,6 +87,7 @@ const Node = (function (
   new (
     x: number,
     y: number,
+    topic: string,
     id: number,
     setThumbnail: (obj: any) => void
   ): Node;

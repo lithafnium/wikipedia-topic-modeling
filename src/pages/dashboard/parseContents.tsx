@@ -15,7 +15,7 @@ const ParseContents = ({ content, summary, title }: any) => {
       {content &&
         content.map((section: any, i: number) => {
           return (
-            <div>
+            <div key={i}>
               <ul style={{ paddingInlineStart: "0px" }}>
                 <li>
                   <a href={`#${i + 1}.0`}>
@@ -25,7 +25,7 @@ const ParseContents = ({ content, summary, title }: any) => {
                 {section.items &&
                   section.items.map((item: any, j: number) => {
                     return (
-                      <ul>
+                      <ul key={j}>
                         <li>
                           <a href={`#${i + 1}.${j + 1}`}>
                             {i + 1}.{j + 1} {item.title}
@@ -34,7 +34,7 @@ const ParseContents = ({ content, summary, title }: any) => {
                         {item.items &&
                           item.items.map((itemInner: any, z: number) => {
                             return (
-                              <ul>
+                              <ul key={z}>
                                 <li>
                                   <a href={`#${i + 1}.${j + 1}.${z + 1}`}>
                                     {i + 1}.{j + 1}.{z + 1} {itemInner.title}

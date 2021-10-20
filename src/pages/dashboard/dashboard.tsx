@@ -5,7 +5,6 @@ import {
   RiArrowDownSLine,
 } from "react-icons/ri";
 import { IconContext } from "react-icons";
-
 import wiki from "wikijs";
 import ParseWikipedia from "./parseWikipedia";
 import ParseContents from "./parseContents";
@@ -27,6 +26,7 @@ import {
   ArrowDiv,
   Thumbnail,
 } from "./styles";
+import { apiPost } from "@app/utils/api";
 
 const Dashboard = () => {
   const [pageContent, setPageContent] = useState(null);
@@ -38,10 +38,23 @@ const Dashboard = () => {
 
   const [showThumbnail, toggleShowThumbnail] = useState(false);
   const [hoverThumbnail, toggleHoverThumbnail] = useState(false);
+  const [loading, toggleLoading] = useState(false);
+  const [response, setResponse] = useState(null);
+
   const [search, setSearch] = useState("");
 
+  const getTopics = async (search: string) => {
+    toggleLoading(true);
+    const response = await apiPost("/generate-topics", {
+      body: {
+        search,
+      },
+    });
+    setResponse(response);
+    toggleLoading(false);
+  };
+
   const getContent = async (search: string) => {
-    console.log(search);
     await wiki()
       .page(search)
       .then((page: any) => page.summary())
@@ -53,7 +66,6 @@ const Dashboard = () => {
       .page(search)
       .then((page: any) => page.content())
       .then((content) => {
-        console.log(content);
         setPageContent(content);
       });
   };
@@ -68,7 +80,11 @@ const Dashboard = () => {
   return (
     <Container id="container">
       <FadeIn>
-        <Canvas setThumbnail={setThumbnail} />
+        <div>
+          {!loading && (
+            <Canvas setThumbnail={setThumbnail} response={response} />
+          )}
+        </div>
         {/* <div>
           {showThumbnail && (
             <Thumbnail
@@ -85,7 +101,14 @@ const Dashboard = () => {
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search Wikipedia"
             />
-            <Button onClick={() => getContent(search)}>Search</Button>
+            <Button
+              onClick={() => {
+                getTopics(search);
+                getContent(search);
+              }}
+            >
+              Search
+            </Button>
           </Inputs>
           <Content expand={expand}>
             <ContentInner>

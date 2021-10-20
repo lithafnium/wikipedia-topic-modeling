@@ -4,21 +4,79 @@ import { Stage, Layer, Circle, Text, Line } from "react-konva";
 import Node from "./node";
 import Edge from "./edge";
 
-const Canvas = ({ setThumbnail }: any) => {
+const Canvas = ({ setThumbnail, response }: any) => {
   const [nodes, setNodes] = useState<Array<Node>>([]);
   const [edges, setEdges] = useState<Array<Edge>>([]);
   const stageRef = useRef(null);
 
+  useEffect(() => {
+    if (response) {
+      console.log(JSON.stringify(response));
+      let { topic_nums, topic_words, word_scores } = response.response;
+
+      generateNodeTopics(topic_nums, topic_words, word_scores);
+    }
+  }, [response]);
+
+  const generateNodeTopics = (
+    topic_nums: any,
+    topic_words: any,
+    word_scores: any
+  ) => {
+    let nodes: Array<Node> = [];
+    let edges: Array<Edge> = [];
+    let index = 0;
+    topic_nums.forEach((num: number) => {
+      let nodeClusters = [];
+
+      let x = Math.floor(Math.random() * window.innerWidth);
+      let y = Math.floor(Math.random() * window.innerHeight);
+      // let y = window.innerHeight / 2 - 200 + 200 * num;
+      nodeClusters.push(new Node(x, y, `topic: ${num}`, index, setThumbnail));
+
+      let topics = topic_words[num];
+
+      for (let i = 0; i < 10; i++) {
+        index++;
+        nodeClusters.push(
+          new Node(
+            120 * Math.cos((Math.PI * i) / 5) + x,
+            120 * Math.sin((Math.PI * i) / 5) + y,
+            topics[i],
+            index,
+            setThumbnail
+          )
+        );
+      }
+
+      let edgeClusters = generateEdges(nodeClusters);
+
+      edges.push(...edgeClusters);
+      nodes.push(...nodeClusters);
+
+      index++;
+    });
+    setNodes(nodes);
+    setEdges(edges);
+  };
+
   const generateNodes = () => {
     let nodes = [];
     nodes.push(
-      new Node(window.innerWidth / 2, window.innerHeight / 2, 0, setThumbnail)
+      new Node(
+        window.innerWidth / 2,
+        window.innerHeight / 2,
+        "test",
+        0,
+        setThumbnail
+      )
     );
     for (let i = 1; i <= 20; i++) {
       nodes.push(
         new Node(
           220 * Math.cos((Math.PI * i) / 10) + window.innerWidth / 2,
           220 * Math.sin((Math.PI * i) / 10) + window.innerHeight / 2,
+          "test",
           i,
           setThumbnail
         )
@@ -26,20 +84,6 @@ const Canvas = ({ setThumbnail }: any) => {
     }
 
     return nodes;
-  };
-
-  const getRandomDifferent = (arr: Array<Node>, last: number) => {
-    if (arr.length === 0) {
-      return new Node(0, 0, 0, setThumbnail);
-    } else if (arr.length === 1) {
-      return arr[0];
-    } else {
-      let num = 0;
-      do {
-        num = Math.floor(Math.random() * arr.length);
-      } while (arr[num].id === last);
-      return arr[num];
-    }
   };
 
   const generateEdges = (nodes: Array<Node>) => {
@@ -54,11 +98,6 @@ const Canvas = ({ setThumbnail }: any) => {
   };
 
   useEffect(() => {
-    let nodes = generateNodes();
-    let edges = generateEdges(nodes);
-    setNodes(nodes);
-    setEdges(edges);
-
     const resizeListener = () => {
       // change width from the state object
       const width = window.innerWidth;
@@ -122,6 +161,7 @@ const Canvas = ({ setThumbnail }: any) => {
     return (
       <>
         <Circle
+          key={index}
           x={x}
           y={y}
           radius={30}
@@ -148,13 +188,15 @@ const Canvas = ({ setThumbnail }: any) => {
             nodes[index].dragMove(e, index, nodes, edges, setNodes, setEdges)
           }
         />
+        <Text text={`${nodes[index].topic}`} x={x} y={y} />
       </>
     );
   };
 
-  const buildEdge = (from: Node, to: Node) => {
+  const buildEdge = (from: Node, to: Node, index: number) => {
     return (
       <Line
+        key={index}
         strokeWidth={2}
         stroke="#1e3d59"
         lineCap="round"
@@ -176,7 +218,7 @@ const Canvas = ({ setThumbnail }: any) => {
     >
       <Layer>
         {edges.map((edge: Edge, index: number) => {
-          return buildEdge(edge.from, edge.to);
+          return buildEdge(edge.from, edge.to, edge.id);
         })}
         {nodes.map((node: Node, index: number) => {
           return buildAnchor(node.x, node.y, node.id);

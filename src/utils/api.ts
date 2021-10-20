@@ -17,6 +17,7 @@ export const apiGet = async (endpoint: String, req: ServerRequest) => {
 };
 
 export const apiPost = async (endpoint: String, req: ServerRequest) => {
+  console.log(req);
   const response = await fetch(`${url}${endpoint}`, {
     method: "POST",
     mode: "cors",
